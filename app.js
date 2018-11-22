@@ -65,10 +65,6 @@ Notification.belongsTo(Image, {foreignKey: 'image_id'})
 Comment.hasMany(Notification, {foreignKey: 'comment_id'})
 Notification.belongsTo(Comment, {foreignKey: 'comment_id'})
 
-
-
-
-
 const usersRouter = require('./routes/users');
 const imagesRouter = require('./routes/images');
 const commentRouter = require('./routes/comments');
