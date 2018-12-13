@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
+const cors = require('cors');
 
 const dbConnector = require('./dbConnector');
 dbConnector.authenticate()
@@ -78,7 +79,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 

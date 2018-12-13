@@ -15,6 +15,10 @@ const User = connector.define('User', {
         allowNull: false
 
     },
+    fullname: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     email: {
         type: Sequelize.STRING,
         allowNull: false

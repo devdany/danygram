@@ -2,3 +2,5 @@
 /node_modules
 package-lock.json
 danystagram.iml
+/frontend/node_modules
+/yarn-lock.json

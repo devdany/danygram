@@ -1,0 +1,44 @@
+msgid ""
+msgstr ""
+"Language: kr"
+
+#: src/components/Footer/index.js
+msgid "About Us"
+msgstr "소개"
+
+#: src/components/Footer/index.js
+msgid "Support"
+msgstr "문의"
+
+#: src/components/Footer/index.js
+msgid "Blog"
+msgstr "블로그"
+
+#: src/components/Footer/index.js
+msgid "Press"
+msgstr "소식"
+
+#: src/components/Footer/index.js
+msgid "API"
+msgstr "개발자"
+
+#: src/components/Footer/index.js
+msgid "Jobs"
+msgstr "채용"
+
+#: src/components/Footer/index.js
+msgid "Privacy"
+msgstr "개인정보"
+
+#: src/components/Footer/index.js
+msgid "Terms"
+msgstr "약관"
+
+#: src/components/Footer/index.js
+msgid "Directory"
+msgstr "색인"
+
+#: src/components/Footer/index.js
+msgid "Language"
+msgstr "언어"
+

@@ -38,6 +38,16 @@ const service = {
         },
         ...relatedModel
     }),
+    alreadyUser: (email) => {
+        return User.findOne({
+            where:{
+                email: email
+            }
+        }).then(user => {
+
+            return user !== null
+        })
+    },
 
     latestUser: (amount) => User.findAll({
         where: {

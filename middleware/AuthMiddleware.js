@@ -1,7 +1,8 @@
 const {ErrorTemplate} = require('../lib/Templates');
 const jwt = require('jsonwebtoken');
 
-const loginAuth = (req, res, next) => {
+
+const isLogin = (req, res, next) => {
     if(!req.headers.authorization){
         res.send(new ErrorTemplate(4, '로그인 세션이 만료되었습니다.'))
     }
@@ -22,4 +23,5 @@ const loginAuth = (req, res, next) => {
     })
 }
 
-module.exports = loginAuth
+
+module.exports = isLogin

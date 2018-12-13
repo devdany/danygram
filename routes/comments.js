@@ -3,8 +3,6 @@ var router = express.Router();
 
 const {findAll, remove, write, findOne} = require('../services/CommentService');
 const {ErrorTemplate} = require('../lib/Templates');
-const loginAuth = require('../middleware/AuthMiddleware');
-
 
 const loginUser_id = 1;
 

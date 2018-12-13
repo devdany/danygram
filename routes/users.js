@@ -10,14 +10,17 @@ const {
     findByUsername,
     updateProfile,
     matchPasswordByLoginuser_id,
-    createUser
+    createUser,
+    isFacebookUser,
+    alreadyUser
 } = require('../services/UserService');
 
 const {getNotifications, createNotification} = require('../services/NotificationService')
 const {ErrorTemplate} = require('../lib/Templates');
 const dateFormatConverter = require('../lib/DateFormatConverter');
-const {defaultLogin, facebookLogin} = require('../lib/Passport');
+const {defaultLogin} = require('../lib/Passport');
 const {loginAuth} = require('../lib/Auth');
+const FaceBookAuth = require('fb');
 
 
 /* GET users listing. */
@@ -101,11 +104,44 @@ router.get('/notifications', (req, res) => {
         })
 })
 
-router.get('/facebookLogin', facebookLogin().authenticate('facebook', {scope: 'email'}));
+router.post('/facebookLogin', (req, res) => {
 
-router.get('/facebook/callback', facebookLogin().authenticate('facebook',{session: false}), (req ,res) => {
-    loginAuth(req.user.dataValues.email).then(token => res.send(token));
-});
+    FaceBookAuth.api('me', {
+        fields: ['name','email','picture','gender','id'],
+        access_token: req.body.access_token
+    }, fbInfo => {
+        const {name, email, gender, id, picture} = fbInfo;
+
+        isFacebookUser(id, email).then(user => {
+            if(user){
+                //로그인 토큰
+                loginAuth(email).then(token => {
+                    res.send({token: token})
+                });
+            }else{
+                //회원가입
+                createUser(
+                    {
+                        username: name,
+                        email: email,
+                        password: id,
+                        profile_img: picture.data.url,
+                        gender: gender,
+                        isDelete: false,
+                        create_dt: dateFormatConverter.convertToSave(new Date()),
+                        type: 'FACEBOOK'
+                    })
+                    .then(user => {
+                        //로그인 토큰
+                        loginAuth(email).then(token => {
+                            res.send({token: token})
+                        });
+                    })
+            }
+        })
+    })
+
+})
 
 router.get('/facebook/fail', (req, res) => {
     res.send('facebook login fail');
@@ -131,35 +167,34 @@ router.post('/follow', (req, res) => {
 router.post('/login', defaultLogin().authenticate('local', {session:false}), (req, res) => {
     const {email} = req.body;
 
-    loginAuth(email).then(token => res.send(token));
+    loginAuth(email).then(token => res.send({token: token}));
 })
 
 router.post('/signUp', (req, res) => {
 
-    const {name, email, password, checkpassword, gender, bio, phone, website} = req.body;
-    
-    if(name && email && password && checkpassword && gender){
-        if(checkpassword === password){
-            createUser({
-                username: name,
-                email: email,
-                password: password,
-                gender: gender,
-                bio: bio,
-                phone: phone,
-                website: website,
-                isDelete: false,
-                create_dt: dateFormatConverter.convertToSave(new Date()),
-                type: 'GENERAL'
-            }).then(user => {
-                loginAuth(user.dataValues.email).then(token => res.send(token));
-            })
+    const {username, email, password, fullname} = req.body;
+
+    alreadyUser(email).then(isUser => {
+        if(isUser){
+            res.send(new ErrorTemplate(0, '이미 가입되어있는 이메일 주소입니다!'))
         }else{
-            res.send(new ErrorTemplate(1, '비밀번호 확인이 일치하지 않습니다.'))
+            if(username && email && password && fullname){
+                createUser({
+                    username: username,
+                    email: email,
+                    fullname: fullname,
+                    password: password,
+                    isDelete: false,
+                    create_dt: dateFormatConverter.convertToSave(new Date()),
+                    type: 'GENERAL'
+                }).then(user => {
+                    loginAuth(user.dataValues.email).then(token => res.send({token:token}));
+                })
+            }else{
+                res.send(new ErrorTemplate(0, '필수 입력 항목을 모두 입력해주세요'))
+            }
         }
-    }else{
-        res.send(new ErrorTemplate(0, '필수 입력 항목을 모두 입력해주세요'))
-    }
+    });
 
 })
 
